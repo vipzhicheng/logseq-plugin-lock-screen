@@ -4,6 +4,8 @@
 
 Add lock screen for Logseq, that would make your notes safer a little bit maybe.
 
+![screencast](./screencast.gif)
+
 ## Usage
 
 When you trigger lock screen, it will show you a random backgroud with a pattern lock which like the Android lock screen.
