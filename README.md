@@ -6,6 +6,13 @@ Add lock screen for Logseq, that would make your notes safer a little bit maybe.
 
 ![screencast](./screencast.gif)
 
+## Features
+
+* Support keyword search.
+* Support remote and local image.
+* Support PNG, JPEG and GIF.
+* Last keyword can be saved permanently.
+
 ## Usage
 
 When you trigger lock screen, it will show you a random backgroud with a pattern lock which like the Android lock screen.

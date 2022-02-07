@@ -69,6 +69,18 @@ async function main() {
     bgEl.src = url;
   };
 
+  const keywordInputElBlurHandler = async e => {
+    refreshButtonElClickHandler();
+    await logseq.FileStorage.setItem('keyword', keywordInputEl.value);
+  };
+
+  const keywordInputElEnterHandler = async e => {
+    if (e.keyCode === 13) {
+      refreshButtonElClickHandler();
+      await logseq.FileStorage.setItem('keyword', keywordInputEl.value);
+    }
+  };
+
   // register model
   const openModel = {
     async show() {
@@ -83,8 +95,11 @@ async function main() {
         autoFocus: true
       });
 
-      const cachedKeyword = await logseq.FileStorage.getItem('keyword');
-      keywordInputEl.value = cachedKeyword || '';
+      try {
+        const cachedKeyword = await logseq.FileStorage.getItem('keyword');
+        keywordInputEl.value = cachedKeyword || '';
+      } catch (e) {}
+
 
       refreshButtonElClickHandler();
     },
@@ -93,10 +108,10 @@ async function main() {
   logseq.provideModel(openModel);
 
   // keywords logic
-  keywordInputEl.addEventListener('blur', async e => {
-    refreshButtonElClickHandler();
-    await logseq.FileStorage.setItem('keyword', keywordInputEl.value);
-  });
+  keywordInputEl.removeEventListener('blur', keywordInputElBlurHandler, false);
+  keywordInputEl.addEventListener('blur', keywordInputElBlurHandler, false);
+  keywordInputEl.removeEventListener('keyup', keywordInputElEnterHandler, false);
+  keywordInputEl.addEventListener('keyup', keywordInputElEnterHandler, false);
 
   if (containerEl) {
     lock.render(containerEl)
