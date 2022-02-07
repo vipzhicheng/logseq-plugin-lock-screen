@@ -35,14 +35,43 @@ const getSettings = (key: string | undefined, defaultValue: any = undefined) => 
 };
 
 async function main() {
+  initSettings();
+  const keyBindings = getSettings('keyBindings');
+  const showToolbarIcon = getSettings('showToolbarIcon');
+
+  let pass = '';
+
+  // get element refs
   const lock = new PatternLock({ vibrate: true });
   const containerEl = document.getElementById('container');
   const messageEl = document.getElementById('message');
-  const bodyEl = document.getElementById('body');
+  const bgEl = document.getElementById('bg') as HTMLImageElement;
   const refreshButtonEl = document.getElementById('refresh-button');
+  const keywordInputEl = document.getElementById('keyword') as HTMLInputElement;
 
+  // trigger change bg
+  const refreshButtonElClickHandler = () => {
+    const height = window.innerHeight;
+    const width = window.innerWidth;
+    const size = width && height ? `${width}x${height}` : '1920x1080';
+    const keyword = keywordInputEl.value;
+    let url;
+    if (keyword) {
+      if (keyword.indexOf('https://') === 0 || keyword.indexOf('http://') === 0 || keyword.indexOf('file://') === 0) {
+        url = keyword;
+      } else {
+        url = `https://source.unsplash.com/random/${size}/?landscape,${keyword}`;
+      }
+    } else {
+      url = `https://source.unsplash.com/random/${size}/?landscape`;
+    }
+
+    bgEl.src = url;
+  };
+
+  // register model
   const openModel = {
-    show() {
+    async show() {
       pass = '';
       messageEl && (messageEl.innerText = 'Set your unlock pattern to lock screen.');
       lock.clear();
@@ -53,33 +82,21 @@ async function main() {
       logseq.showMainUI({
         autoFocus: true
       });
+
+      const cachedKeyword = await logseq.FileStorage.getItem('keyword');
+      keywordInputEl.value = cachedKeyword || '';
+
+      refreshButtonElClickHandler();
     },
   };
 
   logseq.provideModel(openModel);
 
-  initSettings();
-  const keyBindings = getSettings('keyBindings');
-  const showToolbarIcon = getSettings('showToolbarIcon');
-
-  if (showToolbarIcon) {
-    logseq.App.registerUIItem('toolbar', {
-      key: 'open-lock-screen',
-      template: `
-      <a data-on-click="show" class="button" style="font-size: 20px">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-        </svg>
-      </a>
-    `,
-    });
-  }
-
-  const refreshButtonElClickHandler = () => {
-    bodyEl?.setAttribute('background', 'https://source.unsplash.com/random/1920x1080');
-  };
-
-  let pass = '';
+  // keywords logic
+  keywordInputEl.addEventListener('blur', async e => {
+    refreshButtonElClickHandler();
+    await logseq.FileStorage.setItem('keyword', keywordInputEl.value);
+  });
 
   if (containerEl) {
     lock.render(containerEl)
@@ -103,7 +120,7 @@ async function main() {
       });
   }
 
-
+  // hotkeys
   const hotkeys = (window as any)?.hotkeys;
   const bindKeys = async function() {
     if (hotkeys) {
@@ -128,6 +145,18 @@ async function main() {
   bindKeys();
 
 
+  if (showToolbarIcon) {
+    logseq.App.registerUIItem('toolbar', {
+      key: 'open-lock-screen',
+      template: `
+      <a data-on-click="show" class="button" style="font-size: 20px">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    `,
+    });
+  }
 
   const commandHandler = async () => {
     openModel.show();
