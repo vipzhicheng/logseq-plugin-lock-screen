@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lock Screen</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/vanilla-pattern-lock@0.3.0/dist/vanilla-pattern-lock.css"
+    />
+    <style>
+      svg.pattern-lock g.lock-dots circle {
+        fill: gray;
+      }
+    </style>
+  </head>
+  <body class="w-screen h-screen relative">
+    <img
+      id="bg"
+      class="bg-gray-800 absolute inset-0 w-full h-full object-cover -z-10"
+    />
+    <div id="main" class="w-full h-full flex items-center justify-center">
+      <input
+        id="keyword"
+        class="px-2 opacity-0 hover:opacity-70 absolute left-1/2 transform -translate-x-1/2 top-4 bg-gray-200 text-gray-400"
+        placeholder="All"
+      />
+      <div
+        title="Change background"
+        class="absolute right-4 top-4 dark:text-gray-50 opacity-0 hover:opacity-70"
+        :class="bg.indexOf('900') > -1 ? 'text-gray-50' : 'text-gray-900'"
+      >
+        <svg
+          id="refresh-button"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 cursor-pointer"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
+      <div class="inline-block opacity-0 hover:opacity-100">
+        <div
+          class="w-96 h-96 backdrop-blur-md border border-gray-400"
+          id="wrapper"
+        >
+          <div id="container"></div>
+        </div>
+        <div
+          id="message"
+          class="text-gray-100 text-center my-2 bg-gray-900"
+        ></div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/hotkeys-js/dist/hotkeys.min.js"></script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
