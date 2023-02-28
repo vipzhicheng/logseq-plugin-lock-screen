@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.3
+
+- refactor: from webpack to vite
+
 ## v0.0.2
 
 * feat: support keyword search.
