@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.0.4
+
+- fix: add cicd
+
 ## v0.0.3
 
 - refactor: from webpack to vite
